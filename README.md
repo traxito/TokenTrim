@@ -1,19 +1,19 @@
 # TokenTrim (`tt`)
 
 **Cut the token bill of your AI coding assistant by compressing noisy command
-output before it ever reaches the model's context — with zero loss of the
+output before it ever reaches the model's context with zero loss of the
 information the assistant actually needs.**
 
 When your AI assistant (GitHub Copilot, etc.) runs a command like `git diff`,
 `terraform plan`, `docker logs` or `pytest`, the entire raw output is pushed into
-the conversation and you pay for every token — progress bars, boilerplate,
+the conversation and you pay for every token,progress bars, boilerplate,
 repeated log lines, unchanged diff context and all. TokenTrim sits in front of
 those commands, keeps the signal (errors, changed lines, summaries) and drops
 the noise. Typical reduction: **60–90%**.
 
 It is the high-impact idea behind [`rtk`](https://github.com/rtk-ai/rtk),
 rebuilt as a **single Python file with no dependencies** so it installs in two
-steps and runs **natively on Windows** — no Rust, no Homebrew, no WSL, no `uv`,
+steps and runs **natively on Windows** no Rust, no Homebrew, no WSL, no `uv`,
 no plugin marketplace, no sandbox VM.
 
 ---
@@ -80,7 +80,7 @@ python -m unittest discover -s tests -v
 
 ---
 
-## Safety — it never costs you quality
+## Safety, it never costs you quality
 
 - **Exit codes are always preserved.** The assistant still sees pass/fail correctly.
 - **Failures are never truncated away.** On a non-zero exit, the *full* raw
@@ -140,7 +140,7 @@ gradle, and more. Anything else runs unchanged.
 
 ---
 
-## Guaranteed adoption — shell integration & agent hooks
+## Guaranteed adoption, shell integration & agent hooks
 
 Instruction files ask the agent to use `tt`; these two mechanisms don't ask.
 
@@ -183,7 +183,7 @@ Code versions without `updatedInput` support it is a harmless no-op.
 
 ---
 
-## GitHub Copilot in VS Code — automatic use
+## GitHub Copilot in VS Code, automatic use
 
 The installer writes **`.github/copilot-instructions.md`**, VS Code's documented
 "always-on" instructions file. It tells Copilot's agent to prefix heavy terminal
@@ -221,7 +221,7 @@ What TokenTrim gives you instead is a one-step workflow:
 - **Pipe / file:** `some-command | tt trim`, or `tt trim big.log`, then copy the
   result.
 
-`tt trim`/`tt clip` auto-detect the content — JSON (structure only, secrets
+`tt trim`/`tt clip` auto-detect the content, JSON (structure only, secrets
 redacted), unified diffs, stack traces (frames + error kept), or generic logs
 (dedup + truncate).
 
@@ -230,7 +230,7 @@ keystroke before pasting.
 
 ---
 
-## CodeAct mode — many steps in one turn
+## CodeAct mode, many steps in one turn
 
 The other big token drain isn't output size, it's **turns**. Every time the
 assistant makes a tool call, waits, and calls again, the entire conversation
