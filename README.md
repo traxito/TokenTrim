@@ -127,7 +127,7 @@ tt clip                # compress whatever is on your clipboard, in place
 tt code -c '<python>'  # CodeAct: many steps in one turn (see below)
 tt --budget 300 <cmd>  # hard cap: output can never exceed ~300 tokens
 tt -u cat module.py    # ultra mode: show only signatures (def/class/import)
-tt shell-init          # aliases so EVERY command runs through tt (see below)
+tt shell-init          # shell functions so EVERY command runs through tt
 tt --raw <command>     # bypass compression
 tt help
 ```
@@ -144,7 +144,7 @@ gradle, and more. Anything else runs unchanged.
 
 Instruction files ask the agent to use `tt`; these two mechanisms don't ask.
 
-**Shell wrappers (`tt shell-init`).** Prints functions/aliases that route
+**Shell wrappers (`tt shell-init`).** Prints shell functions that route
 `git`, `docker`, `kubectl`, `terraform`, `npm`, `pytest`, `az`, `aws`… through
 `tt` in *every* terminal — including the one your AI agent uses — with zero
 cooperation from the model. One line to install:

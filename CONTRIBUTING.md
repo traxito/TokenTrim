@@ -25,9 +25,9 @@ for exactly what has and hasn't been exercised. High-value contributions:
   built from unit tests with realistic-but-synthetic captures, not live
   output. If something breaks or looks wrong on real infra, that's exactly
   the kind of bug report (or PR) this project needs.
-- **Linux / macOS verification** — the shell paths (`tt shell-init bash`,
-  the Unix launcher) are unit-tested but have not been run on a real
-  Linux/macOS box.
+- **macOS verification** — Windows and Linux (WSL 2 Ubuntu) have been
+  exercised live (see BENCHMARKS.md), but the macOS-specific paths
+  (pbcopy/pbpaste clipboard, zsh) have not been run on a real Mac.
 - **New presets** for commands not yet covered, following the pattern of
   existing `filter_*` functions in `tt.py`.
 - **Bug reports with a reproduction** — a raw command + its `tt` output that

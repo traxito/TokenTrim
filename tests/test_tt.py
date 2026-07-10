@@ -356,9 +356,12 @@ class TestSafety(unittest.TestCase):
         self.assertIn("hello from shim", out)
 
     def test_capture_command_not_found(self):
+        # The exact OS error varies (ENOENT on most systems; WSL can raise
+        # EACCES scanning /mnt/c PATH entries) -- what matters is exit 127
+        # and a message naming the command.
         code, out = tt.capture(["definitely-not-a-command-xyz"])
         self.assertEqual(code, 127)
-        self.assertIn("not found", out)
+        self.assertIn("definitely-not-a-command-xyz", out)
 
     def test_filter_cat_missing_file_sets_exit_code(self):
         res = tt.filter_cat(["cat", "no_such_file_xyz.txt"], {})
@@ -625,10 +628,13 @@ class TestShellInit(unittest.TestCase):
         self.assertIn("function global:git { & tt git @args }", out)
         self.assertIn("function global:kubectl", out)
 
-    def test_bash_aliases(self):
+    def test_bash_functions(self):
+        # Functions, not aliases: aliases don't expand in non-interactive
+        # bash (bash -c), which is what AI agents run (verified on WSL).
         out = self._capture(["bash"])
-        self.assertIn("alias git='tt git'", out)
+        self.assertIn('git() { tt git "$@"; }', out)
         self.assertIn('eval "$(tt shell-init bash)"', out)
+        self.assertNotIn("alias ", out)
 
 
 class TestHook(unittest.TestCase):

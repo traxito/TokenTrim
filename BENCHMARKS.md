@@ -92,6 +92,39 @@ Plan: 2 add, 0 change, 0 destroy
   `git status` produced TokenTrim's compressed output — no `tt` prefix typed,
   no cooperation from any agent — and `$LASTEXITCODE` was preserved.
 
+## Linux results (WSL 2 Ubuntu, native ext4 repo)
+
+The same playground was rebuilt natively inside WSL 2 Ubuntu (Python 3.14,
+git 2.53, GNU grep 3.12, GNU findutils 4.10) and the benchmark re-run through
+the **real Unix launcher** (`~/.local/bin/tt`, installed by `install.py`).
+This exercises paths that don't exist on Windows: real GNU `grep`/`find`,
+the real `ls -la` baseline, and the bash shell integration.
+
+| Case (real execution on Linux) | Raw tokens | tt tokens | Saved | Exit preserved |
+|---|---:|---:|---:|:--:|
+| `git log` (30 commits) | 1,307 | 310 | **76.3%** | ✓ |
+| `git status` | 109 | 31 | **71.6%** | ✓ |
+| `git diff` (3 files) | 464 | 354 | **23.7%** | ✓ |
+| `ls -la` | 150 | 33 | **78.0%** | ✓ |
+| `grep -rn` (real GNU grep, grouped) | 447 | 242 | **45.9%** | ✓ |
+| `find . -name '*.py'` (tiny output) | 24 | 24 | 0.0% (floor) | ✓ |
+| `tt -u cat` (signatures only) | 152 | 48 | **68.4%** | ✓ |
+| `curl https://example.com` | 140 | 64 | **54.3%** | ✓ |
+| 916-line app log (`tt log`) | 16,643 | 800 | **95.2%** | ✓ |
+| AWS-style JSON (`tt json`) | 6,073 | 130 | **97.9%** | ✓ |
+
+The full 76-test unit suite also passes on Linux (1 skip: a Windows-only
+case). The installer, launcher creation (with the executable bit) and
+`tt --version` through `~/.local/bin/tt` were all verified live.
+
+**Linux-only bug found and fixed:** `tt shell-init bash` originally emitted
+`alias git='tt git'` — but **aliases don't expand in non-interactive bash**
+(`bash -c ...`), which is exactly how AI agents run commands. Verified live on
+WSL: with aliases, a plain `git status` bypassed tt entirely; with shell
+functions (`git() { tt git "$@"; }`) interception works in both interactive
+and non-interactive shells. `shell-init` now emits functions
+(bypass: `command git ...`).
+
 ## Bugs found (and fixed) by this benchmark
 
 Real-world testing caught two bugs the unit suite couldn't:
@@ -109,15 +142,16 @@ Both fixes have regression tests (`tests/test_tt.py`, 76 tests).
 
 ## Honest scope of this benchmark
 
-Tested for real on this machine: git, pytest, mypy, npm, pip, terraform
-(init/plan), curl, ls, log files, JSON, trim, map, gain, shell-init, the
-installer and the PATH setup — all on **Windows 11 / PowerShell**.
+Tested for real: git, pytest, mypy, npm, pip, terraform (init/plan), curl,
+ls, grep, find, cat, log files, JSON, trim, map, gain, shell-init, both
+installers and the PATH setup — on **Windows 11 / PowerShell** and on
+**Linux (WSL 2 Ubuntu) / bash** with the native Unix launcher.
 
 Not exercised against real services (not installed here): docker, kubectl,
 helm, az/aws/gcloud CLIs — their presets are covered by unit tests with
-realistic captured/synthetic outputs, but not by live runs. Linux/macOS paths
-(bash launcher, aliases) exist and are unit-tested but were not executed on a
-real Linux/macOS box. Field reports and PRs welcome — see the repo issues.
+realistic captured/synthetic outputs, but not by live runs. macOS paths
+(pbcopy/pbpaste, zsh) are unit-tested but were not executed on a real Mac.
+Field reports and PRs welcome — see the repo issues.
 
 ## Reproduce it
 

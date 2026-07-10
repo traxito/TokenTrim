@@ -2165,9 +2165,11 @@ def cmd_shell_init(args):
     else:
         out.append("# Install: add this line to ~/.bashrc or ~/.zshrc:")
         out.append('#   eval "$(tt shell-init bash)"')
-        out.append("# Bypass also works with:  command git ...   or   \\git ...")
+        out.append("# Bypass also works with:  command git ...")
+        # Functions, not aliases: aliases don't expand in non-interactive
+        # shells (bash -c ...), which is exactly what AI agents use.
         for c in SHELL_WRAP:
-            out.append("alias %s='tt %s'" % (c, c))
+            out.append('%s() { tt %s "$@"; }' % (c, c))
     sys.stdout.write("\n".join(out) + "\n")
     return 0
 
