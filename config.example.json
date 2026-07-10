@@ -1,0 +1,19 @@
+{
+  "_help": "Optional. Copy this file to ~/.tokentrim/config.json (Windows: %USERPROFILE%\\.tokentrim\\config.json). All keys are optional. A .tokentrim.json in a repo root overrides these per project.",
+  "_exclude": "Commands to leave untouched (always passthrough), e.g. interactive tools.",
+  "exclude": [],
+  "_tee_mode": "'failures' (default) saves full raw output only when a command fails; 'always' saves every time; 'never' disables it.",
+  "tee_mode": "failures",
+  "_ultra": "true = extra-compact output everywhere (signatures for code, tighter tables).",
+  "ultra": false,
+  "_budget": "Hard cap: no command output may exceed ~N tokens (0 = disabled). Also available per run: tt --budget N <cmd>, or TT_BUDGET env var.",
+  "budget": 0,
+  "_price_per_1k": "Optional $ price per 1K tokens; when set, `tt gain` also shows money saved (e.g. 0.003).",
+  "price_per_1k": 0,
+  "_resource_include": "Regex patterns; when set, terraform/cost presets keep ONLY matching resource addresses/groups (e.g. work on one Business Unit).",
+  "resource_include": [],
+  "_resource_exclude": "Regex patterns to drop matching resource addresses/groups from terraform/cost presets.",
+  "resource_exclude": [],
+  "_session_cache": "true = for read-only commands: byte-identical output shows 'unchanged since ...'; slightly changed output shows only the changed lines. Safe: the command still runs.",
+  "session_cache": false
+}

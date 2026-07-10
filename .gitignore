@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# TokenTrim local state (never commit: tee logs may contain raw command
+# output, stats are personal)
+.tokentrim/
+tee/
+stats.jsonl
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+.DS_Store
+
+# Local config that could hold private resource names
+config.json
