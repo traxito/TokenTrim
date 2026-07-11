@@ -125,6 +125,49 @@ functions (`git() { tt git "$@"; }`) interception works in both interactive
 and non-interactive shells. `shell-init` now emits functions
 (bypass: `command git ...`).
 
+## Real infrastructure round: Docker, Kubernetes, AWS, systemd, a real OSS repo
+
+A second round (2026-07-11) went after the presets that hadn't been exercised
+live. Everything below ran against **real software, not mocks of tt's
+making**: a fresh clone of [pallets/flask](https://github.com/pallets/flask),
+a real Docker Engine with running/crashing containers, a real single-node
+Kubernetes cluster (k3s v1.36), the real `aws` CLI talking to an
+AWS-API-compatible server (moto), and the live systemd journal — all inside
+WSL 2 Ubuntu.
+
+| Case | Raw tokens | tt tokens | Saved | Exit |
+|---|---:|---:|---:|:--:|
+| **flask**: `git log` (full real history) | 324,172 | 283 | **99.9%** | ✓ |
+| **flask**: `grep -rn 'def ' src` | 7,661 | 1,317 | **82.8%** | ✓ |
+| **flask**: `git show HEAD` | 188 | 89 | **52.7%** | ✓ |
+| **flask**: `ls -la` | 241 | 36 | **85.1%** | ✓ |
+| `journalctl -n 300` (live journal) | 8,035 | 1,177 | **85.4%** | ✓ |
+| `systemctl status` (real unit) | 515 | 108 | **79.0%** | ✓ |
+| `docker logs` (400 timestamped errors) | 9,600 | 26 | **99.7%** | ✓ |
+| `docker ps` | 55 | 35 | **36.4%** | ✓ |
+| `kubectl get pods` (1 CrashLoop of 4) | 74 | 17 | **77.0%** | ✓ |
+| `kubectl get pods -A` (11 pods) | 282 | 35 | **87.6%** | ✓ |
+| `kubectl describe pod` (broken pod) | 962 | 594 | **38.3%** | ✓ |
+| `aws ec2 describe-instances` (6 instances) | 8,493 | 130 | **98.5%** | ✓ |
+| `aws ec2 describe-images` (full AMI catalog) | 335,308 | 130 | **~100%** | ✓ |
+| `tt clip` (Windows clipboard round-trip) | 3,312 | 31 | **99.1%** | ✓ |
+
+Highlights worth calling out:
+
+- **`git log` on a real repo is a context bomb**: Flask's full history is
+  ~324K tokens — more than most models' context windows — and an agent that
+  runs it raw pays for all of it. Through tt: 283 tokens.
+- **The anomaly-aware kubectl preset works against a real cluster.** With 3
+  healthy pods and one crash-looping, `tt kubectl get pods` printed exactly:
+  `4 pods | 3 Running, 1 Error` + `! crashy  Error  restarts=2  age=82s`.
+- **`docker logs` with real timestamps dedups to one line**: 400 distinct
+  ISO-stamped error lines → `... connection refused  (x400)`.
+- **Secret redaction held under the real AWS CLI**: `ClientToken` and
+  credential-shaped fields came back as `<redacted>` in the compact JSON.
+- Exit codes were preserved on every case, including a case where both raw
+  and tt-wrapped `kubectl logs` failed identically (exit 1/1) — tt reported
+  the failure faithfully instead of masking it.
+
 ## Bugs found (and fixed) by this benchmark
 
 Real-world testing caught two bugs the unit suite couldn't:
@@ -142,16 +185,18 @@ Both fixes have regression tests (`tests/test_tt.py`, 76 tests).
 
 ## Honest scope of this benchmark
 
-Tested for real: git, pytest, mypy, npm, pip, terraform (init/plan), curl,
-ls, grep, find, cat, log files, JSON, trim, map, gain, shell-init, both
-installers and the PATH setup — on **Windows 11 / PowerShell** and on
-**Linux (WSL 2 Ubuntu) / bash** with the native Unix launcher.
+Tested for real: git (including a real OSS repo), pytest, mypy, npm, pip,
+terraform (init/plan), **docker** (real Engine, running + crashing
+containers), **kubectl** (real k3s cluster), **aws CLI** (against moto, an
+AWS-API-compatible server — not AWS itself), journalctl/systemctl (live
+systemd), curl, ls, grep, find, cat, log files, JSON, trim, clip (real
+Windows clipboard), map, gain, shell-init, both installers and the PATH
+setup — on **Windows 11 / PowerShell** and **Linux (WSL 2 Ubuntu) / bash**.
 
-Not exercised against real services (not installed here): docker, kubectl,
-helm, az/aws/gcloud CLIs — their presets are covered by unit tests with
-realistic captured/synthetic outputs, but not by live runs. macOS paths
-(pbcopy/pbpaste, zsh) are unit-tested but were not executed on a real Mac.
-Field reports and PRs welcome — see the repo issues.
+Still not exercised live: helm, oc, podman, the az and gcloud CLIs against
+real Azure/GCP subscriptions, aws against actual AWS (moto speaks the same
+API but real accounts have bigger/messier payloads), and macOS
+(pbcopy/pbpaste, zsh). Field reports and PRs welcome — see the repo issues.
 
 ## Reproduce it
 

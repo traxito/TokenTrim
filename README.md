@@ -57,14 +57,15 @@ For every wrapped command TokenTrim applies four strategies (same as `rtk`):
 
 | Case (real execution) | Raw | TokenTrim | Saved |
 |---|---:|---:|---:|
-| `git log` (repo with 30 commits) | 1,307 | 317 | **76%** |
-| `git status` (3 modified + 6 untracked) | 122 | 48 | **61%** |
-| `pytest` (3 failures of 13 tests) | 524 | 233 | **56%** |
-| `ls` (project directory) | 182 | 28 | **85%** |
+| `git log` on a real OSS repo (Flask, full history) | 324,172 | 283 | **99.9%** |
+| `docker logs` (400 timestamped errors, real Engine) | 9,600 | 26 | **99.7%** |
+| `aws ec2 describe-instances` (real CLI, 6 instances) | 8,493 | 130 | **98.5%** |
+| `kubectl get pods -A` (real k3s cluster, 11 pods) | 282 | 35 | **88%** |
 | 916-line app log (`tt log`) | 16,643 | 813 | **95%** |
-| AWS-style JSON, 18 instances (`tt json`) | 6,073 | 130 | **98%** |
 | `terraform plan` (real init+plan, JSON-native) | 283 | 18 | **94%** |
-| `curl` on an HTML page | 140 | 69 | **51%** |
+| `journalctl -n 300` (live systemd journal) | 8,035 | 1,177 | **85%** |
+| `grep -rn` over Flask's real source | 7,661 | 1,317 | **83%** |
+| `pytest` (3 failures of 13 tests) | 524 | 233 | **56%** |
 | `npm install` (real, 2 packages) | 24 | 1 | **96%** |
 
 Whole benchmark session as reported by `tt gain`: **43,202 raw → 3,964 sent
