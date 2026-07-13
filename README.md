@@ -27,7 +27,7 @@ python.org or the Store).
 # 1. from the extracted tokentrim folder:
 python install.py
 
-# 2. reopen your terminal (and reload VS Code) — done.
+# 2. reopen your terminal (and reload VS Code) , done.
 ```
 
 That's it. `install.py`:
@@ -52,7 +52,7 @@ For every wrapped command TokenTrim applies four strategies (same as `rtk`):
 | **Truncate** | keep head+tail of huge output, note how many lines were cut |
 | **Deduplicate** | collapse repeated log lines into `line  (x143)` |
 
-**Measured savings — real installation, real commands, real projects**
+**Measured savings, real installation, real commands, real projects**
 (full methodology, sample outputs and caveats in [BENCHMARKS.md](BENCHMARKS.md)):
 
 | Case (real execution) | Raw | TokenTrim | Saved |
@@ -70,7 +70,7 @@ For every wrapped command TokenTrim applies four strategies (same as `rtk`):
 
 Whole benchmark session as reported by `tt gain`: **43,202 raw → 3,964 sent
 (91% saved)**. The noisier the output, the bigger the win; dense outputs like
-`pip list` save little — and can never go negative, because TokenTrim falls
+`pip list` save little , and can never go negative, because TokenTrim falls
 back to the raw text if compressing wouldn't help.
 
 Run the suite yourself (standard library only):
@@ -96,7 +96,7 @@ python -m unittest discover -s tests -v
   size fallback.
 - **Unknown commands run unchanged** (transparent passthrough).
 - **Escape hatch:** `tt --raw <cmd>` (or `TT_RAW=1`) bypasses compression entirely.
-- A filter that ever errors falls back to running your command normally — `tt`
+- A filter that ever errors falls back to running your command normally , `tt`
   will not break a command.
 
 ---
@@ -147,7 +147,7 @@ Instruction files ask the agent to use `tt`; these two mechanisms don't ask.
 
 **Shell wrappers (`tt shell-init`).** Prints shell functions that route
 `git`, `docker`, `kubectl`, `terraform`, `npm`, `pytest`, `az`, `aws`… through
-`tt` in *every* terminal — including the one your AI agent uses — with zero
+`tt` in *every* terminal , including the one your AI agent uses , with zero
 cooperation from the model. One line to install:
 
 ```powershell
@@ -178,7 +178,7 @@ tt init all        # all of the above
 
 **Claude Code hard hook (experimental).** `tt init claude --hook` also installs
 a `PreToolUse` hook in `.claude/settings.json` that rewrites simple Bash
-commands (`git status` → `tt git status`) *before* they run — real interception,
+commands (`git status` → `tt git status`) *before* they run , real interception,
 not an instruction. Pipelines and unknown commands are never touched; on Claude
 Code versions without `updatedInput` support it is a harmless no-op.
 
@@ -196,7 +196,7 @@ user-wide file). The template is in `templates/copilot-instructions.md`.
 
 > Note: VS Code Copilot's public customisation surface is instruction files, not
 > hard command-interception hooks. So the agent adopts `tt` because it is
-> instructed to — very reliable in practice, and you can always run `tt`
+> instructed to , very reliable in practice, and you can always run `tt`
 > yourself in the terminal for guaranteed compression.
 
 ---
@@ -211,7 +211,7 @@ chat message before it's sent, so nothing can transparently trim the chat box.
 What TokenTrim gives you instead is a one-step workflow:
 
 - **Clipboard round-trip (recommended):** copy the text, run `tt clip`, then
-  paste — the clipboard now holds the compressed version.
+  paste , the clipboard now holds the compressed version.
 
   ```bash
   # after copying a 700-line log:
@@ -250,7 +250,7 @@ process, with helpers preloaded that already return compressed output:
 | `run("c1","c2",…)` | run several, return combined compressed output |
 
 ```bash
-# find every TODO and show the shape of each affected file — in ONE turn:
+# find every TODO and show the shape of each affected file , in ONE turn:
 tt code -c '
 for f in glob("src/**/*.py"):
     hits = grep("TODO", f)
@@ -263,9 +263,9 @@ for f in glob("src/**/*.py"):
 The installer adds a CodeAct section to `.github/copilot-instructions.md`, so
 Copilot's agent prefers one `tt code` over many separate tool calls. This is the
 [`copilot-codeact`](https://github.com/jsturtevant/copilot-codeact-plugin) idea,
-but with no `uv`, no marketplace and no sandbox VM — just Python.
+but with no `uv`, no marketplace and no sandbox VM , just Python.
 
-> Trust: `tt code` runs the snippet on your machine with normal privileges —
+> Trust: `tt code` runs the snippet on your machine with normal privileges ,
 > exactly like the assistant running a shell script. Only the assistant (which
 > you already trust to run commands) writes these snippets.
 
@@ -308,11 +308,11 @@ extract only what matters:
   collapsed to `... [12 library frames collapsed] ...`; your code's frames and
   the exception always survive.
 
-**Data science / ML — paste or wrap:**
+**Data science / ML , paste or wrap:**
 
 - **Training logs** (Keras / TF / PyTorch): `tt train python train.py`, or paste
   through `tt trim`. Instead of one line per epoch you get the metric
-  trajectories, the **best epoch**, and a **plateau / early-stop** signal —
+  trajectories, the **best epoch**, and a **plateau / early-stop** signal ,
   e.g. `Best: epoch 41 val_loss=0.0522 | No improvement last 19 epochs`. ~99%.
 - **`pandas` `df.info()`** → `DF 184320 rows x 22 cols, 30.9MB` + only columns
   with nulls (big gaps flagged `!`) + dtype counts. Just paste through `tt trim`.
@@ -331,21 +331,21 @@ into the chat becomes a one-step compress.
 }
 ```
 
-- `resource_include` / `resource_exclude` — regexes that keep/drop resources in
+- `resource_include` / `resource_exclude` , regexes that keep/drop resources in
   the Terraform and Cost presets, so you see only your Business Unit.
-- `session_cache` — for read-only commands agents love to re-run (`git status`,
+- `session_cache` , for read-only commands agents love to re-run (`git status`,
   `kubectl get pods`): byte-identical output becomes one line
   (`unchanged since 2m ago`); *slightly* changed output becomes only the changed
   lines (`+`/`-`). Safe: the command still runs; only the display is shortened.
 
 ---
 
-## Repo map — fewer exploratory turns
+## Repo map , fewer exploratory turns
 
 `tt map` prints a one-shot compact overview of the repository: directories,
 file counts, and per code file its `def`/`class` signatures. An agent that
 reads this once skips the usual burst of `ls`/`cat`/`grep` calls at the start
-of a task — and each avoided turn is a full conversation replay you don't pay
+of a task , and each avoided turn is a full conversation replay you don't pay
 for. The generated instruction files tell the agent to do exactly that.
 
 ---
@@ -376,7 +376,7 @@ python install.py --uninstall
 ```
 
 Removes `~/.tokentrim/` and the `tt` launcher. Any
-`.github/copilot-instructions.md` files stay in your repos — delete the
+`.github/copilot-instructions.md` files stay in your repos , delete the
 TokenTrim section by hand if you want it gone.
 
 ---
