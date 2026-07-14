@@ -24,10 +24,14 @@ You only need Python 3.8+ (already on macOS/Linux; on Windows install from
 python.org or the Store).
 
 ```bash
-# 1. from the extracted tokentrim folder:
+# 1. Clone the repo: git clone https://github.com/traxito/TokenTrim.git
+
+# 2. Go to the TokenTrim folder: cd TokenTrim
+
+# 3. Install it:
 python3 install.py
 
-# 2. reopen your terminal (and reload VS Code) , done.
+# 4. reopen your terminal (and reload VS Code) , done.
 ```
 
 That's it. `install.py`:
