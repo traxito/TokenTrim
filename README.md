@@ -25,7 +25,7 @@ python.org or the Store).
 
 ```bash
 # 1. from the extracted tokentrim folder:
-python install.py
+python3 install.py
 
 # 2. reopen your terminal (and reload VS Code) , done.
 ```
